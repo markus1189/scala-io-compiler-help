@@ -1,0 +1,104 @@
+\documentclass{beamer}
+
+\usepackage{minted}
+\usepackage{pgf}
+\usepackage[utf8]{inputenc}
+\usepackage{mdframed}
+
+\BeforeBeginEnvironment{minted}{\begin{mdframed}}
+\AfterEndEnvironment{minted}{\end{mdframed}}
+
+\title{Let The Compiler Help You: How To Make The Most Of Scala's Typesystem}
+\author{Markus Hauck (@markus1189)}
+
+\date{Scala.IO 2017}
+\subject{Computer Science}
+\usetheme{codecentric}
+
+\renewcommand\texttt[1]{\mintinline{scala}/#1/}
+
+\usemintedstyle{fruity}
+
+\begin{document}
+
+{
+  \usebackgroundtemplate{\includegraphics[height=\paperheight]{background.jpg}}
+  \frame[plain]{\titlepage}
+}
+
+\section{Intro}
+\label{sec:intro}
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item Programming as a dialog between you and the compiler
+  \item Compiler tells you that what you wrote makes sense
+  \item Tries to prevent you from making errors
+  \item Ultimately you run and see whether it works
+  \item Hate/love relationship with the compiler
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Become Friends}
+  \begin{itemize}
+  \item Turns out the compiler is only there to help
+  \item He wants you to succeed, not prevent you to
+  \item You should write your code in a way that the compiler can do
+    the most for you
+  \item This talk: how to improve your relationship with your compiler
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Compiler Does Not Read Documentation}
+  \begin{itemize}
+  \item documentation is NOT a way to talk to your compiler
+  \item (and probably neither to your coworkers)
+  \item use a language that the compiler understands: types
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Option/Either/Custom}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Avoid Invalid Instantiation}
+  \begin{itemize}
+  \item require/assert/exceptions = bad
+  \item better: use custom instantiation methods
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Constrain Your Inputs}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Phantom Types for Tags}
+  \begin{itemize}
+  \item Whenever input enters your system: require validation
+  \item Avoid validation again and again because of different flows
+    through system and refactorings
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Phantom Types for State Machines}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Calculate Types}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Compiler Is There To Help!}
+  \vfill
+  \begin{center}
+    {\Huge THANKS!}
+  \end{center}
+\end{frame}
+
+\end{document}
