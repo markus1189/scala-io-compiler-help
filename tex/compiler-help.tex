@@ -52,23 +52,45 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{The Compiler Does Not Read Documentation}
+  \frametitle{Disclaimer: The Compiler. Does. Not. Read. Documentation}
   \begin{itemize}
   \item documentation is NOT a way to talk to your compiler
   \item (and probably neither to your coworkers)
+  \item also to avoid: context sensitive reasoning
+  \item think: I \textbf{know} this can't happen
   \item use a language that the compiler understands: types
   \end{itemize}
 \end{frame}
 
+\section{Step 1: Don't lie about what you can do}
+
+\begin{frame}[fragile]
+  \frametitle{Get The Max Out Of Your List}
+  \includegraphics[width=0.8\textwidth]{../pics/list-max.png}
+\end{frame}
+
+\begin{frame}[fragile,fragile]
+  \frametitle{Putting It Into Practice}
+  \begin{minted}{scala}
+scala> List[Int](1, 2, 3).max
+res0: Int = 3
+\end{minted}
+\begin{minted}{scala}
+scala> List[Int]().max                                                             
+java.lang.UnsupportedOperationException: empty.max                                 
+\end{minted}
+\end{frame}
+
 \begin{frame}
-  \frametitle{Option/Either/Custom}
+  \frametitle{Step 1: Don't lie about what you can do}
   \begin{itemize}
-  \item simple things first
-  \item whenever you can't return a result (Option)
-  \item or when you want to signal an error (Either)
-  \item often done: but this can't happen
-  \item well, it can't happen \textbf{now}
-  \item make reasoning context-free again!
+  \item The compiler can't help you if you lie
+  \item How to tell the truth:
+    \begin{itemize}
+    \item Option
+    \item Either
+    \item Custom ADT
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -141,6 +163,7 @@
 
 \begin{frame}
   \frametitle{Calculate Types}
+  
 \end{frame}
 
 \begin{frame}
