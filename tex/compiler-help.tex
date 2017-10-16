@@ -62,6 +62,26 @@
 
 \begin{frame}
   \frametitle{Option/Either/Custom}
+  \begin{itemize}
+  \item simple things first
+  \item whenever you can't return a result (Option)
+  \item or when you want to signal an error (Either)
+  \item often done: but this can't happen
+  \item well, it can't happen \textbf{now}
+  \item make reasoning context-free again!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ensure Simple Invariants}
+  \begin{itemize}
+  \item let's start with ensuring invariants
+  \item two ways to react to invalid input:
+    \begin{itemize}
+    \item signal error (as return value)
+    \item better: don't allow invalid input!
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -74,19 +94,49 @@
 
 \begin{frame}
   \frametitle{Constrain Your Inputs}
+  \begin{itemize}
+  \item previously: accept arguments, maybe fail
+  \item but: we did nothing wrong!  It's the caller's fault!
+  \item use types to only accept valid input
+  \item (this is a trade-off and cannot be done for all args)
+  \item negative int, empty collection and more
+  \item how to enforce?
+    \begin{itemize}
+    \item custom classes with smart constructors
+    \item if possible use libraries
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Phantom Types for Tags}
   \begin{itemize}
-  \item Whenever input enters your system: require validation
+  \item Creating new classes for invariants works, but very cumbersome
+  \item But: Whenever input enters your system: require validation
   \item Avoid validation again and again because of different flows
-    through system and refactorings
+    through system and refactorings (context-free!)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Refined}
+  \begin{itemize}
+  \item Indexing into collections
+  \item Creating e.g. Versions from Strings
+  \item Calculate average on empty list?
+  \item Validation should happen \textbf{at the boundaries} (once and
+    for all)
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Phantom Types for State Machines}
+  \begin{itemize}
+  \item Given a state machine type of flow, we can represent that with
+    types!
+  \item Use subtyping to model your graph
+  \item typical example: the builder
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
