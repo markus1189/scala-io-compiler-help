@@ -56,13 +56,19 @@
   \begin{itemize}
   \item documentation is NOT a way to talk to your compiler
   \item (and probably neither to your coworkers)
-  \item also to avoid: context sensitive reasoning
+  \item also to avoid: \textbf{context sensitive} reasoning
   \item think: I \textbf{know} this can't happen
   \item use a language that the compiler understands: types
   \end{itemize}
 \end{frame}
 
-\section{Step 1: Don't lie about what you can do}
+\section{Step 1: Don't lie}
+
+\begin{frame}[c]
+  \begin{center}
+    \Large Step 1: Don't lie about what you CAN do
+  \end{center}
+\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Get The Max Out Of Your List}
@@ -72,11 +78,11 @@
 \begin{frame}[fragile,fragile]
   \frametitle{Putting It Into Practice}
   \begin{minted}{scala}
-scala> List[Int](1, 2, 3).max
+> List[Int](1, 2, 3).max
 res0: Int = 3
 \end{minted}
 \begin{minted}{scala}
-scala> List[Int]().max                                                             
+> List[Int]().max                                                             
 java.lang.UnsupportedOperationException: empty.max                                 
 \end{minted}
 \end{frame}
@@ -95,6 +101,51 @@ java.lang.UnsupportedOperationException: empty.max
 \end{frame}
 
 \begin{frame}
+  \frametitle{A better max}
+  
+\end{frame}
+
+\section{Step 2: If not allowed, forbid it}
+
+\begin{frame}[fragile]
+  \frametitle{If not allowed, FORBID it}
+\begin{minted}{scala}
+case class Email(value: String) extends AnyVal {
+  require(isValidEmail(value))
+}
+\end{minted}
+\begin{minted}{scala}
+> Email("markus.hauck@codecentric.de")
+res1: Email = ...
+> Email("Hello World!")
+java.lang.IllegalArgumentException: 
+  Not a valid email address                      
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile,fragile]
+  \frametitle{If not allowed, FORBID it}
+\begin{minted}{scala}
+abstract case class Email private (...)
+
+object Email {
+  def fromString: Either[ValidationError, Email] = 
+    ??? // exercise
+}
+\end{minted}
+
+\begin{minted}{scala}
+> Email.fromString("markus.hauck@codecentric.de")
+res1: Either[ValidationError, Email] = 
+  Right("markus.hauck@codecentric.de")
+
+> Email.fromString("Hello World")
+res2: Either[ValidationError, Email] = 
+  Left(InvalidEmail)
+\end{minted}
+\end{frame}
+
+\begin{frame}
   \frametitle{Ensure Simple Invariants}
   \begin{itemize}
   \item let's start with ensuring invariants
@@ -106,6 +157,13 @@ java.lang.UnsupportedOperationException: empty.max
   \end{itemize}
 \end{frame}
 
+\section{Step 3: Don't accept garbage}
+
+\begin{frame}
+  \frametitle{Step 3: Don't accept garbage}
+  \includegraphics[width=\textwidth]{../pics/scrapyard-2441432_1280.jpg}
+\end{frame}
+
 \begin{frame}
   \frametitle{Avoid Invalid Instantiation}
   \begin{itemize}
@@ -115,8 +173,8 @@ java.lang.UnsupportedOperationException: empty.max
 \end{frame}
 
 \begin{frame}
-  \frametitle{Constrain Your Inputs}
-  \begin{itemize}
+  \frametitle{Don't accept garbage as your input}
+   \begin{itemize}
   \item previously: accept arguments, maybe fail
   \item but: we did nothing wrong!  It's the caller's fault!
   \item use types to only accept valid input
@@ -129,6 +187,30 @@ java.lang.UnsupportedOperationException: empty.max
     \end{itemize}
   \end{itemize}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Pushing Boundaries}
+  \begin{itemize}
+  \item we shift the responsiblity to another place
+  \item good: separate \textit{validation} from actual program
+  \item goal: push it to the boundaries and deal with it \textbf{once}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,fragile]
+  \frametitle{Putting It Into Practice}
+\begin{minted}{scala}
+def sendEmail(mail: String): Either[MailValidationError, MailStatus]
+// vs
+def sendEmail(mail: Email): MailStatus
+\end{minted}
+\begin{minted}{scala}
+> NonEmptyList.of(1, 2, 3).head
+res1: Int = 1
+\end{minted}
+\end{frame}
+
+\section{Step 4: Avoid Inconsistent States}
 
 \begin{frame}
   \frametitle{Phantom Types for Tags}
