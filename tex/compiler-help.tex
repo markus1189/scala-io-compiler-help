@@ -62,7 +62,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Step 1: Don't lie}
+\section{Step 1: Don't Lie}
 
 \begin{frame}[c]
   \begin{center}
@@ -105,7 +105,7 @@ java.lang.UnsupportedOperationException: empty.max
   
 \end{frame}
 
-\section{Step 2: If not allowed, forbid it}
+\section{Step 2: Forbid It}
 
 \begin{frame}[fragile]
   \frametitle{If not allowed, FORBID it}
@@ -157,7 +157,7 @@ res2: Either[ValidationError, Email] =
   \end{itemize}
 \end{frame}
 
-\section{Step 3: Don't accept garbage}
+\section{Step 3: No Garbage}
 
 \begin{frame}
   \frametitle{Step 3: Don't accept garbage}
@@ -210,8 +210,6 @@ res1: Int = 1
 \end{minted}
 \end{frame}
 
-\section{Step 4: Avoid Inconsistent States}
-
 \begin{frame}
   \frametitle{Phantom Types for Tags}
   \begin{itemize}
@@ -233,6 +231,27 @@ res1: Int = 1
   \end{itemize}
 \end{frame}
 
+\section{Step 4: No Inconsistent States}
+
+\begin{frame}
+  \frametitle{Types As Documentation}
+  \begin{itemize}
+  \item common pattern: builders and state machines
+  \item problem: invariants / minimal set of attributes / conflicting
+    methods
+  \item goal: only allow correct usage
+  \item (without using inheritance)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Types As Documentation}
+  \begin{itemize}
+  \item phantom types + subtyping
+  \item model the ``states'' as a type, use bounds to constrict
+  \end{itemize}
+\end{frame}
+
 \begin{frame}
   \frametitle{Phantom Types for State Machines}
   \begin{itemize}
@@ -244,8 +263,39 @@ res1: Int = 1
 \end{frame}
 
 \begin{frame}
-  \frametitle{Calculate Types}
-  
+  \frametitle{State Machine}
+  \begin{itemize}
+  \item example: vending machine
+    %TODO: insert graphical image here
+  \item actions:
+    \begin{itemize}
+    \item insert 50 cents
+    \item abort and return change
+    \item extract item
+    \end{itemize}
+  \item constraints:
+    \begin{itemize}
+    \item you can only insert 50 cents twice
+    \item extraction is not possible until paid
+    \item abort can only be used before confirm
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{State Machine}
+  \begin{itemize}
+  \item let's express that in code:
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{State Machines: Summary}
+  \begin{itemize}
+  \item alternative to inheritance, but more ligthweight (instead of
+    creating classes for all states)
+  \item does not allow invalid state
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
