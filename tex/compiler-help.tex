@@ -30,13 +30,80 @@
 \label{sec:intro}
 
 \begin{frame}
+  \begin{center}
+    \frametitle{One Evening}
+    \includegraphics[width=0.6\textwidth]{../pics/lets-program.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Done!?}
+\begin{minted}{bash}
+> compile
+[success] Total time: 42s, completed Nov 2 14:05:42
+> run
+...
+\end{minted}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{../pics/unsupported.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Done!?}
+\begin{minted}{bash}
+> compile
+[success] Total time: 42s, completed Nov 2 14:05:42
+> run
+...
+\end{minted}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{../pics/iae.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{../pics/told-you.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{A Better Way}
+\begin{minted}[fontsize=\footnotesize]{bash}
+> compile
+[info] Compiling 1 Scala source to 
+  /home/brain/world-domination/target/scala-2.12/classes ...
+[error] ConquerWorld.scala:1337:42: type mismatch;
+[error]  found   : Int(-42)
+[error]  required: PositiveInt
+[error]   requiredAssets(-42)
+[error]        ^
+[error] one error found
+[error] (compile:compileIncremental) Compilation failed
+\end{minted}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{../pics/good-compiler.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}
   \frametitle{Introduction}
   \begin{itemize}
-  \item Programming as a dialog between you and the compiler
-  \item Compiler tells you that what you wrote makes sense
-  \item Tries to prevent you from making errors
-  \item Ultimately you run and see whether it works
-  \item Hate/love relationship with the compiler
+  \item Java: fight the stupid compiler and the types
+  \item Better: cooperate with the compiler!
+  \item To get the most help, you need to communicate with
+    the compiler
+  \item this talk: how to become friends with the compiler
   \end{itemize}
 \end{frame}
 
@@ -47,7 +114,17 @@
   \item He wants you to succeed, not prevent you to
   \item You should write your code in a way that the compiler can do
     the most for you
-  \item This talk: how to improve your relationship with your compiler
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Road Ahead}
+  \begin{itemize}
+  \item We will start slowly and pickup speed
+  \item 0: Don't lie
+  \item 1: Don't lie
+  \item 2: TODO
+  \item 3: TODO
   \end{itemize}
 \end{frame}
 
@@ -59,6 +136,54 @@
   \item also to avoid: \textbf{context sensitive} reasoning
   \item think: I \textbf{know} this can't happen
   \item use a language that the compiler understands: types
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+  \item refer to https://bartoszmilewski.com/2014/11/24/types-and-functions/
+  \end{itemize}
+%   Who Needs Types?
+
+% There seems to be some controversy about the advantages of static vs. dynamic and strong vs. weak typing. Let me illustrate these choices with a thought experiment. Imagine millions of monkeys at computer
+% keyboards happily hitting random keys, producing programs, compiling, and running them.
+
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+% IMG_1329                     
+
+% With machine language, any combination of bytes produced by monkeys would be accepted and run. But with higher level languages, we do appreciate the fact that a compiler is able to detect lexical and grammatical
+% errors. Lots of monkeys will go without bananas, but the remaining programs will have a better chance of being useful. Type checking provides yet another barrier against nonsensical programs. Moreover, whereas
+% in a dynamically typed language, type mismatches would be discovered at runtime, in strongly typed statically checked languages type mismatches are discovered at compile time, eliminating lots of incorrect
+% programs before they have a chance to run.
+
+% So the question is, do we want to make monkeys happy, or do we want to produce correct programs?
+
+% The usual goal in the typing monkeys thought experiment is the production of the complete works of Shakespeare. Having a spell checker and a grammar checker in the loop would drastically increase the odds. The
+% analog of a type checker would go even further by making sure that, once Romeo is declared a human being, he doesn’t sprout leaves or trap photons in his powerful gravitational field.
+\end{frame}
+
+\section{Step 0: Open Lines}
+
+\begin{frame}
+  \frametitle{Open Lines}
+  \begin{itemize}
+  \item THE COMPILER IS SHY: ENCOURAGE TO SPEAK
+  \item by default, the compiler will not tell you everything
+  \item enable flags to make it talk
+  \item recommended: ...
   \end{itemize}
 \end{frame}
 
@@ -97,6 +222,14 @@ java.lang.UnsupportedOperationException: empty.max
     \item Either
     \item Custom ADT
     \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Communication is Everything}
+  \begin{itemize}
+  \item communicate absence: Option
+  \item communicate error vs success: Either/Validated/IOr
   \end{itemize}
 \end{frame}
 
@@ -200,9 +333,11 @@ res2: Either[ValidationError, Email] =
 \begin{frame}[fragile,fragile]
   \frametitle{Putting It Into Practice}
 \begin{minted}{scala}
-def sendEmail(mail: String): Either[MailValidationError, MailStatus]
+def sendEmail(mail: String): 
+  Either[MailValidationError, MailStatus]
 // vs
-def sendEmail(mail: Email): MailStatus
+def sendEmail(mail: Email): 
+  MailStatus
 \end{minted}
 \begin{minted}{scala}
 > NonEmptyList.of(1, 2, 3).head
@@ -282,11 +417,15 @@ res1: Int = 1
   \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{State Machine}
   \begin{itemize}
   \item let's express that in code:
   \end{itemize}
+
+\begin{minted}{scala}
+
+\end{minted}
 \end{frame}
 
 \begin{frame}
@@ -295,6 +434,36 @@ res1: Int = 1
   \item alternative to inheritance, but more ligthweight (instead of
     creating classes for all states)
   \item does not allow invalid state
+  \end{itemize}
+\end{frame}
+
+\section{Step 5: Calculate Types}
+
+\begin{frame}
+  \frametitle{Returning Goods}
+  \begin{itemize}
+  \item our vending machine only produced one type of good
+  \item let's extend the machine:
+    \begin{itemize}
+    \item after inserting fifty cents, calling extract dispenses XXX
+    \item after inserting one euro, calling extract dispenses YYY
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Returning Goods}
+  \begin{itemize}
+  \item if we look at our extraction method:
+  \end{itemize}
+
+\begin{minted}{scala}
+def extract : ??? // outcome depends on the state!
+\end{minted}
+
+  \begin{itemize}
+  \item out \texttt{return type} depends on the current state!
+  \item solution: calculate return type from our state.  How?
   \end{itemize}
 \end{frame}
 
