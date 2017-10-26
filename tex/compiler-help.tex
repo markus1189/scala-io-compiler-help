@@ -175,7 +175,7 @@
 % analog of a type checker would go even further by making sure that, once Romeo is declared a human being, he doesn’t sprout leaves or trap photons in his powerful gravitational field.
 \end{frame}
 
-\section{Step 0: Open Lines}
+\section{Open Lines}
 
 \begin{frame}
   \frametitle{Open Lines}
@@ -187,7 +187,7 @@
   \end{itemize}
 \end{frame}
 
-\section{Step 1: Don't Lie}
+\section{Don't Lie}
 
 \begin{frame}[c]
   \begin{center}
@@ -226,22 +226,32 @@ java.lang.UnsupportedOperationException: empty.max
 \end{frame}
 
 \begin{frame}
-  \frametitle{Communication is Everything}
+  \frametitle{Case Study: Vending Machine}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{../pics/vending.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{A First Design}
   \begin{itemize}
-  \item communicate absence: Option
-  \item communicate error vs success: Either/Validated/IOr
+  \item 
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{A better max}
-  
+  \frametitle{A First Design}
+  \begin{itemize}
+  \item compiler knows very little about our program
+  \item without source code and docs: very unfriendly
+  \item let's see how we can improve
+  \end{itemize}
 \end{frame}
 
-\section{Step 2: Forbid It}
+\section{Forbid It}
 
 \begin{frame}[fragile]
-  \frametitle{If not allowed, FORBID it}
+  \frametitle{If not allowed, Forbid it}
 \begin{minted}{scala}
 case class Email(value: String) extends AnyVal {
   require(isValidEmail(value))
@@ -256,8 +266,20 @@ java.lang.IllegalArgumentException:
 \end{minted}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Ensure Simple Invariants}
+  \begin{itemize}
+  \item let's start with ensuring invariants
+  \item two ways to react to invalid input:
+    \begin{itemize}
+    \item signal error (as return value)
+    \item better: don't allow invalid input!
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile,fragile]
-  \frametitle{If not allowed, FORBID it}
+  \frametitle{If not allowed, Forbid it}
 \begin{minted}{scala}
 abstract case class Email private (...)
 
@@ -278,19 +300,7 @@ res2: Either[ValidationError, Email] =
 \end{minted}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Ensure Simple Invariants}
-  \begin{itemize}
-  \item let's start with ensuring invariants
-  \item two ways to react to invalid input:
-    \begin{itemize}
-    \item signal error (as return value)
-    \item better: don't allow invalid input!
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\section{Step 3: No Garbage}
+\section{No Garbage}
 
 \begin{frame}
   \frametitle{Step 3: Don't accept garbage}
@@ -366,7 +376,7 @@ res1: Int = 1
   \end{itemize}
 \end{frame}
 
-\section{Step 4: No Inconsistent States}
+\section{No Inconsistent States}
 
 \begin{frame}
   \frametitle{Types As Documentation}
@@ -437,7 +447,7 @@ res1: Int = 1
   \end{itemize}
 \end{frame}
 
-\section{Step 5: Calculate Types}
+\section{Calculate Types}
 
 \begin{frame}
   \frametitle{Returning Goods}
