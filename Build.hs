@@ -43,7 +43,7 @@ commandDeps cmds file = do
   case etex of
     Left err -> error ("Parsing of file " <> file <> " failed: " <> show err)
     Right t ->
-      return . map T.unpack .
+      return . filter (/= "scala") . map T.unpack .
         mapMaybe cmdArgs .
         concatMap snd .
         matchCommand (`elem` cmds) $
@@ -54,7 +54,7 @@ graphicDeps = commandDeps ["includegraphics"]
 
 texDeps :: FilePath -> IO [FilePath]
 texDeps file = do
-  deps <- commandDeps ["include","input"] file
+  deps <- commandDeps ["include","input", "inputminted"] file
   return $ fmap (\dep -> if null (takeExtension dep)
                             then dep <.> "tex"
                             else dep) deps

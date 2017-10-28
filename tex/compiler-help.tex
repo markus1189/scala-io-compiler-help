@@ -6,7 +6,7 @@
 \usepackage{mdframed}
 
 \BeforeBeginEnvironment{minted}{\begin{mdframed}}
-\AfterEndEnvironment{minted}{\end{mdframed}}
+  \AfterEndEnvironment{minted}{\end{mdframed}}
 
 \title{Let The Compiler Help You: How To Make The Most Of Scala's Typesystem}
 \author{Markus Hauck (@markus1189)}
@@ -99,21 +99,20 @@
 \begin{frame}
   \frametitle{Introduction}
   \begin{itemize}
-  \item Java: fight the stupid compiler and the types
-  \item Better: cooperate with the compiler!
-  \item To get the most help, you need to communicate with
-    the compiler
-  \item this talk: how to become friends with the compiler
+  \item currently: programming as a fight against the compiler
+  \item soon: work together with the compiler
+  \item tests: \textbf{evidence} it works
+  \item types: \textbf{proof} it works
+  \item you need to communicate with the compiler
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Become Friends}
   \begin{itemize}
-  \item Turns out the compiler is only there to help
-  \item He wants you to succeed, not prevent you to
-  \item You should write your code in a way that the compiler can do
-    the most for you
+  \item by default the compiler is a little shy
+  \item but once you get friends, you don't want to go back
+  \item bla bla bla
   \end{itemize}
 \end{frame}
 
@@ -129,11 +128,11 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Disclaimer: The Compiler. Does. Not. Read. Documentation}
+  \frametitle{Not: Documentation}
   \begin{itemize}
-  \item documentation is NOT a way to talk to your compiler
-  \item (and probably neither to your coworkers)
-  \item also to avoid: \textbf{context sensitive} reasoning
+  \item documentation is not for the compiler
+  \item it is meant for humans (which are bad at it)
+  \item avoid: \textbf{context sensitive} reasoning
   \item think: I \textbf{know} this can't happen
   \item use a language that the compiler understands: types
   \end{itemize}
@@ -143,36 +142,36 @@
   \begin{itemize}
   \item refer to https://bartoszmilewski.com/2014/11/24/types-and-functions/
   \end{itemize}
-%   Who Needs Types?
+  % Who Needs Types?
 
-% There seems to be some controversy about the advantages of static vs. dynamic and strong vs. weak typing. Let me illustrate these choices with a thought experiment. Imagine millions of monkeys at computer
-% keyboards happily hitting random keys, producing programs, compiling, and running them.
+  % There seems to be some controversy about the advantages of static vs. dynamic and strong vs. weak typing. Let me illustrate these choices with a thought experiment. Imagine millions of monkeys at computer
+  % keyboards happily hitting random keys, producing programs, compiling, and running them.
 
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-                             
-% IMG_1329                     
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  % IMG_1329                     
 
-% With machine language, any combination of bytes produced by monkeys would be accepted and run. But with higher level languages, we do appreciate the fact that a compiler is able to detect lexical and grammatical
-% errors. Lots of monkeys will go without bananas, but the remaining programs will have a better chance of being useful. Type checking provides yet another barrier against nonsensical programs. Moreover, whereas
-% in a dynamically typed language, type mismatches would be discovered at runtime, in strongly typed statically checked languages type mismatches are discovered at compile time, eliminating lots of incorrect
-% programs before they have a chance to run.
+  % With machine language, any combination of bytes produced by monkeys would be accepted and run. But with higher level languages, we do appreciate the fact that a compiler is able to detect lexical and grammatical
+  % errors. Lots of monkeys will go without bananas, but the remaining programs will have a better chance of being useful. Type checking provides yet another barrier against nonsensical programs. Moreover, whereas
+  % in a dynamically typed language, type mismatches would be discovered at runtime, in strongly typed statically checked languages type mismatches are discovered at compile time, eliminating lots of incorrect
+  % programs before they have a chance to run.
 
-% So the question is, do we want to make monkeys happy, or do we want to produce correct programs?
+  % So the question is, do we want to make monkeys happy, or do we want to produce correct programs?
 
-% The usual goal in the typing monkeys thought experiment is the production of the complete works of Shakespeare. Having a spell checker and a grammar checker in the loop would drastically increase the odds. The
-% analog of a type checker would go even further by making sure that, once Romeo is declared a human being, he doesn’t sprout leaves or trap photons in his powerful gravitational field.
+  % The usual goal in the typing monkeys thought experiment is the production of the complete works of Shakespeare. Having a spell checker and a grammar checker in the loop would drastically increase the odds. The
+  % analog of a type checker would go even further by making sure that, once Romeo is declared a human being, he doesn’t sprout leaves or trap photons in his powerful gravitational field.
 \end{frame}
 
 \section{Open Lines}
@@ -187,11 +186,50 @@
   \end{itemize}
 \end{frame}
 
-\section{Don't Lie}
+\begin{frame}
+  \frametitle{Case Study: Vending Machine}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+      \item insert coin (50 cents or 1 euro)
+      \item push button for drink
+      \item abort the transaction and return money
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{../pics/vending.jpg}
+      \end{center}
 
-\begin{frame}[c]
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \inputminted[fontsize=\small, firstline=3]{scala}{../src/main/scala/de/codecentric/zero/VendingMachine.scala}
+\end{frame}
+
+\begin{frame}
+  \frametitle{A First Design}
+  \begin{itemize}
+  \item what does the compiler know?
+  \item what do you as a user of this class know without docs?
+  \end{itemize}
+    \begin{center}
+    \includegraphics[width=0.4\textwidth]{../pics/docs.jpg}
+  \end{center}
+  \begin{itemize}
+  \item let's see how we can improve on this!
+  \end{itemize}
+
+\end{frame}
+
+\section{Be Honest}
+
+\begin{frame}
+  \frametitle{Step 1: Be Honest}
   \begin{center}
-    \Large Step 1: Don't lie about what you CAN do
+    \includegraphics[width=\textwidth]{../pics/dog.jpg}
   \end{center}
 \end{frame}
 
@@ -201,8 +239,8 @@
 \end{frame}
 
 \begin{frame}[fragile,fragile]
-  \frametitle{Putting It Into Practice}
-  \begin{minted}{scala}
+  \frametitle{Get The Max Out Of Your List}
+\begin{minted}{scala}
 > List[Int](1, 2, 3).max
 res0: Int = 3
 \end{minted}
@@ -213,45 +251,52 @@ java.lang.UnsupportedOperationException: empty.max
 \end{frame}
 
 \begin{frame}
-  \frametitle{Step 1: Don't lie about what you can do}
+  \frametitle{Be Honest}
   \begin{itemize}
-  \item The compiler can't help you if you lie
-  \item How to tell the truth:
-    \begin{itemize}
-    \item Option
-    \item Either
-    \item Custom ADT
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Case Study: Vending Machine}
-  \begin{center}
-    \includegraphics[width=0.5\textwidth]{../pics/vending.jpg}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \frametitle{A First Design}
-  \begin{itemize}
-  \item 
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{A First Design}
-  \begin{itemize}
-  \item compiler knows very little about our program
-  \item without source code and docs: very unfriendly
-  \item let's see how we can improve
+  \item The compiler can't help you if you are not honest
+  \item \texttt{max} pretends to always return something, which is not
+    the case!
+  \item tell the compiler this operation can fail
+  \item Option: if no result is a result
+  \item Either: if there can be errors
+  \item Custom ADT:\@if \texttt{Either} doesn't cut it
   \end{itemize}
 \end{frame}
 
 \section{Forbid It}
 
+\begin{frame}
+  \frametitle{Step 3: If not allowed, forbid it}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{../pics/forbidden.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile,fragile]
+  \frametitle{Step 3: If not allowed, forbid it}
+  \begin{itemize}
+  \item \textbf{every} project has domain classes with invariants
+  \item how to verify those invariants?
+  \end{itemize}
+\begin{minted}{scala}
+if (input.isValid) {
+  ???
+} else {
+  throw new Exception("whoopsie")
+}
+\end{minted}
+\begin{minted}{scala}
+class ImportantStuff(stuff: Stuff) {
+  require(stuff.isImportant, "Not important!")
+}
+\end{minted}
+  \begin{itemize}
+  \item but the compiler (and others) does not know this!
+  \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]
-  \frametitle{If not allowed, Forbid it}
+  \frametitle{If not allowed, forbid it}
 \begin{minted}{scala}
 case class Email(value: String) extends AnyVal {
   require(isValidEmail(value))
@@ -260,6 +305,7 @@ case class Email(value: String) extends AnyVal {
 \begin{minted}{scala}
 > Email("markus.hauck@codecentric.de")
 res1: Email = ...
+
 > Email("Hello World!")
 java.lang.IllegalArgumentException: 
   Not a valid email address                      
@@ -267,19 +313,17 @@ java.lang.IllegalArgumentException:
 \end{frame}
 
 \begin{frame}
-  \frametitle{Ensure Simple Invariants}
+  \frametitle{If not allowed, forbid it}
   \begin{itemize}
-  \item let's start with ensuring invariants
-  \item two ways to react to invalid input:
-    \begin{itemize}
-    \item signal error (as return value)
-    \item better: don't allow invalid input!
-    \end{itemize}
+  \item how can we improve?
+  \item for methods, the \textbf{return type} changed
+  \item instantiation doesn't have one?
+  \item one solution: smart constructors / factories
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile,fragile]
-  \frametitle{If not allowed, Forbid it}
+  \frametitle{If not allowed, forbid it}
 \begin{minted}{scala}
 abstract case class Email private (...)
 
@@ -300,6 +344,38 @@ res2: Either[ValidationError, Email] =
 \end{minted}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Case Study}
+  \begin{itemize}
+  \item Okay, back to our case study
+  \item we want to fix:
+    \begin{itemize}
+    \item methods that are not honest
+    \item forbid invalid instantiation
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,c]
+  
+  \inputminted[fontsize=\small, firstline=3, lastline=22]{scala}{../src/main/scala/de/codecentric/two/VendingMachine.scala}
+\end{frame}
+
+\begin{frame}[fragile,c]
+  \inputminted[fontsize=\small, firstline=24]{scala}{../src/main/scala/de/codecentric/two/VendingMachine.scala}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Case Study: Review}
+  \begin{itemize}
+  \item we got rid of all exceptions
+  \item no way to ``forget'' that something can fail
+  \item compiler (coworkers?) now knows quite a bit more
+  \item what else can we improve?
+  \end{itemize}
+\end{frame}
+
 \section{No Garbage}
 
 \begin{frame}
@@ -308,50 +384,87 @@ res2: Either[ValidationError, Email] =
 \end{frame}
 
 \begin{frame}
-  \frametitle{Avoid Invalid Instantiation}
-  \begin{itemize}
-  \item require/assert/exceptions = bad
-  \item better: use custom instantiation methods
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
   \frametitle{Don't accept garbage as your input}
-   \begin{itemize}
-  \item previously: accept arguments, maybe fail
-  \item but: we did nothing wrong!  It's the caller's fault!
-  \item use types to only accept valid input
-  \item (this is a trade-off and cannot be done for all args)
-  \item negative int, empty collection and more
-  \item how to enforce?
-    \begin{itemize}
-    \item custom classes with smart constructors
-    \item if possible use libraries
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pushing Boundaries}
   \begin{itemize}
-  \item we shift the responsiblity to another place
-  \item good: separate \textit{validation} from actual program
-  \item goal: push it to the boundaries and deal with it \textbf{once}
+    
+  \item our constructor and methods are quite nice with us
+  \item they take almost everything!
+  \item does the validation really belong in our vending machine?
+  \item actually it is the \textbf{caller}'s fault!
+  \item better: don't accept garbage and let the caller to the work
+  \item push validation to the boundaries of your system
+  \item avoid doing it over and over again in program flow
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile,fragile]
   \frametitle{Putting It Into Practice}
 \begin{minted}{scala}
-def sendEmail(mail: String): 
-  Either[MailValidationError, MailStatus]
-// vs
-def sendEmail(mail: Email): 
-  MailStatus
+class MailService {
+  def sendEmail(mail: String): 
+    Either[MailValidationError, MailStatus]
+}
+\end{minted}
+
+\begin{minted}{scala}
+class MailService {
+  def sendEmail(mail: Email): MailStatus
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Putting It Into Practice}
+\begin{minted}{scala}
+> List(1, 2, 3).head
+res1: Option[Int] = Some(1)
 \end{minted}
 \begin{minted}{scala}
 > NonEmptyList.of(1, 2, 3).head
 res1: Int = 1
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile,fragile]
+  \frametitle{Putting It Into Practice}
+\begin{minted}{scala}
+sealed abstract class List[+A] {
+  def apply(index: Int): A
+}
+\end{minted}
+
+\begin{minted}{scala}
+sealed abstract class List[+A] {
+  def apply(index: Natural): A
+}
+\end{minted}
+\end{frame}
+
+\begin{frame}
+  \frametitle{How To Validate}
+  \begin{itemize}
+  \item we have two choices
+  \item use a new class with smart constructors
+  \item use a \texttt{Tagged} and phantom types
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,fragile]
+  \frametitle{Validation With Smart Constructors}
+\begin{minted}{scala}
+abstract case class Email private (...)
+
+object Email {
+  def fromString: Either[ValidationError, Email] = 
+    ??? // exercise
+}
+\end{minted}
+  \begin{itemize}
+  \item that works, but becomes cumbersome pretty quick
+  \item I \textbf{know} it will succeed!
+  \end{itemize}
+\begin{minted}{scala}
+> Email.fromString("foo@bar.de")
 \end{minted}
 \end{frame}
 
@@ -411,7 +524,7 @@ res1: Int = 1
   \frametitle{State Machine}
   \begin{itemize}
   \item example: vending machine
-    %TODO: insert graphical image here
+    % TODO: insert graphical image here
   \item actions:
     \begin{itemize}
     \item insert 50 cents
