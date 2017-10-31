@@ -7,7 +7,7 @@
 \usepackage{mdframed}
 
 \BeforeBeginEnvironment{minted}{\begin{mdframed}}
-  \AfterEndEnvironment{minted}{\end{mdframed}}
+\AfterEndEnvironment{minted}{\end{mdframed}}
 
 \title{Let The Compiler Help You: How To Make The Most Of Scala's Typesystem}
 \author{Markus Hauck (@markus1189)}
@@ -111,6 +111,17 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{The Road Ahead}
+  \begin{itemize}
+  \item Preparations
+  \item Be Honest
+  \item Forbid it
+  \item No Garbage
+  \item Only Valid Ops
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
   \frametitle{Become Friends}
   \begin{itemize}
   \item by default the compiler is a little shy
@@ -123,17 +134,11 @@
     \item \texttt{-Xlint:-unused}
     \item \texttt{-Ywarn-unused:imports,privates,locals}
     \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{The Road Ahead}
-  \begin{itemize}
-  \item We will start slowly and pickup speed
-  \item 0: Don't lie
-  \item 1: Don't lie
-  \item 2: TODO
-  \item 3: TODO
+  \item sometimes false positives, see
+    \begin{itemize}
+    \item \texttt{scalac -X}
+    \item \texttt{scalac -Y}
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -145,52 +150,6 @@
   \item avoid: \textbf{context sensitive} reasoning
   \item think: I \textbf{know} this can't happen
   \item use a language that the compiler understands: types
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \begin{itemize}
-  \item refer to https://bartoszmilewski.com/2014/11/24/types-and-functions/
-  \end{itemize}
-  % Who Needs Types?
-
-  % There seems to be some controversy about the advantages of static vs. dynamic and strong vs. weak typing. Let me illustrate these choices with a thought experiment. Imagine millions of monkeys at computer
-  % keyboards happily hitting random keys, producing programs, compiling, and running them.
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  % IMG_1329                     
-
-  % With machine language, any combination of bytes produced by monkeys would be accepted and run. But with higher level languages, we do appreciate the fact that a compiler is able to detect lexical and grammatical
-  % errors. Lots of monkeys will go without bananas, but the remaining programs will have a better chance of being useful. Type checking provides yet another barrier against nonsensical programs. Moreover, whereas
-  % in a dynamically typed language, type mismatches would be discovered at runtime, in strongly typed statically checked languages type mismatches are discovered at compile time, eliminating lots of incorrect
-  % programs before they have a chance to run.
-
-  % So the question is, do we want to make monkeys happy, or do we want to produce correct programs?
-
-  % The usual goal in the typing monkeys thought experiment is the production of the complete works of Shakespeare. Having a spell checker and a grammar checker in the loop would drastically increase the odds. The
-  % analog of a type checker would go even further by making sure that, once Romeo is declared a human being, he doesn’t sprout leaves or trap photons in his powerful gravitational field.
-\end{frame}
-
-\begin{frame}
-  \frametitle{Open Lines}
-  \begin{itemize}
-  \item THE COMPILER IS SHY: ENCOURAGE TO SPEAK
-  \item by default, the compiler will not tell you everything
-  \item enable flags to make it talk
-  \item recommended: ...
   \end{itemize}
 \end{frame}
 
@@ -223,13 +182,9 @@
   \item what does the compiler know?
   \item what do you as a user of this class know without docs?
   \end{itemize}
-    \begin{center}
-    \includegraphics[width=0.4\textwidth]{../pics/docs.jpg}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{../pics/docs.jpg}
   \end{center}
-  \begin{itemize}
-  \item let's see how we can improve on this!
-  \end{itemize}
-
 \end{frame}
 
 \section{Be Honest}
@@ -261,7 +216,7 @@ java.lang.UnsupportedOperationException: empty.max
 \begin{frame}
   \frametitle{Be Honest}
   \begin{itemize}
-  \item The compiler can't help you if you are not honest
+  \item not honest $\Rightarrow$ no help
   \item \texttt{max} pretends to always return something, which is not
     the case!
   \item tell the compiler this operation can fail
@@ -271,17 +226,31 @@ java.lang.UnsupportedOperationException: empty.max
   \end{itemize}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Be Honest}
+  \begin{itemize}
+  \item how does this apply to our case study?
+  \item \texttt{insertMoney} can fail
+  \item \texttt{pushButton} can fail
+  \item \texttt{abort} can fail
+  \end{itemize}
+
+  \begin{itemize}
+  \item we will fix this later
+  \end{itemize}
+\end{frame}
+
 \section{Forbid It}
 
 \begin{frame}
-  \frametitle{Step 3: If not allowed, forbid it}
+  \frametitle{Step 2: If not allowed, forbid it}
   \begin{center}
     \includegraphics[width=0.5\textwidth]{../pics/forbidden.png}
   \end{center}
 \end{frame}
 
 \begin{frame}[fragile,fragile]
-  \frametitle{Step 3: If not allowed, forbid it}
+  \frametitle{Step 2: If not allowed, forbid it}
   \begin{itemize}
   \item \textbf{every} project has domain classes with invariants
   \item how to verify those invariants?
@@ -568,10 +537,10 @@ object Email {
   \inputminted[fontsize=\small,firstline=9, lastline=23]{scala}{../src/main/scala/de/codecentric/three/VendingMachine.scala}
 \end{frame}
 
-\section{Restrict Valid Operations}
+\section{Only Valid Ops}
 
 \begin{frame}
-  \frametitle{Restrict Valid Operations}
+  \frametitle{Step 4: Restrict Valid Operations}
   \begin{center}
     \includegraphics[width=.8\textwidth]{../pics/control-panel.jpg}
   \end{center}
@@ -694,6 +663,15 @@ object Email {
   \end{itemize}
 \end{frame}
 
+\section{Conclusion}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[width=.55\textwidth]{../pics/meme.jpg}
+  \end{center}
+
+\end{frame}
+
 \begin{frame}
   \frametitle{The Compiler Is There To Help!}
   \begin{center}
@@ -704,6 +682,26 @@ object Email {
   \begin{center}
     {\Huge THANKS!}
   \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Bonus: Exercise}
+  \begin{itemize}
+  \item our vending machine is still quite liberal
+  \end{itemize}
+
+\begin{minted}{scala}
+val machine: VendingMachine[Ready] = 
+  VendingMachine.initial.insertEuro()
+
+val drink1 = machine.pushButton()._2
+val drink2 = machine.pushButton()._2
+// ...
+\end{minted}
+    \begin{itemize}
+    \item how could we restrict this \textbf{with types}?
+    \item hint: limit access to the state machine
+  \end{itemize}
 \end{frame}
 
 \end{document}
