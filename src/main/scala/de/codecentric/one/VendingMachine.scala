@@ -1,6 +1,6 @@
 package de.codecentric.one
 
-final class VendingMachine private (id: Int) {
+final class VendingMachine(id: Int) {
   require(id > 0 && id < 100, "Invalid identifier")
   private[this] var amount: Int = 0
 

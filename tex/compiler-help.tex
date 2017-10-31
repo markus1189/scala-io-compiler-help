@@ -2,6 +2,7 @@
 
 \usepackage{minted}
 \usepackage{pgf}
+\usepackage{tikz}
 \usepackage[utf8]{inputenc}
 \usepackage{mdframed}
 
@@ -18,6 +19,8 @@
 \renewcommand\texttt[1]{\mintinline{scala}/#1/}
 
 \usemintedstyle{fruity}
+
+\usetikzlibrary{arrows,automata}
 
 \begin{document}
 
@@ -100,7 +103,7 @@
   \frametitle{Introduction}
   \begin{itemize}
   \item currently: programming as a fight against the compiler
-  \item soon: work together with the compiler
+  \item soon: work \textbf{together} with the compiler
   \item tests: \textbf{evidence} it works
   \item types: \textbf{proof} it works
   \item you need to communicate with the compiler
@@ -112,7 +115,14 @@
   \begin{itemize}
   \item by default the compiler is a little shy
   \item but once you get friends, you don't want to go back
-  \item bla bla bla
+  \item first thing: unmute him!
+    \begin{itemize}
+    \item \texttt{-deprecation}
+    \item \texttt{-unchecked}
+    \item \texttt{-Xfuture}
+    \item \texttt{-Xlint:-unused}
+    \item \texttt{-Ywarn-unused:imports,privates,locals}
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -173,8 +183,6 @@
   % The usual goal in the typing monkeys thought experiment is the production of the complete works of Shakespeare. Having a spell checker and a grammar checker in the loop would drastically increase the odds. The
   % analog of a type checker would go even further by making sure that, once Romeo is declared a human being, he doesn’t sprout leaves or trap photons in his powerful gravitational field.
 \end{frame}
-
-\section{Open Lines}
 
 \begin{frame}
   \frametitle{Open Lines}
@@ -362,7 +370,7 @@ res2: Either[ValidationError, Email] =
 \end{frame}
 
 \begin{frame}[fragile,c]
-  \inputminted[fontsize=\small, firstline=24]{scala}{../src/main/scala/de/codecentric/two/VendingMachine.scala}
+  \inputminted[fontsize=\small, firstline=24, lastline=33]{scala}{../src/main/scala/de/codecentric/two/VendingMachine.scala}
 \end{frame}
 
 
@@ -383,11 +391,44 @@ res2: Either[ValidationError, Email] =
   \includegraphics[width=\textwidth]{../pics/scrapyard-2441432_1280.jpg}
 \end{frame}
 
+\begin{frame}[fragile,fragile]
+  \frametitle{Don't accept garbage input}
+  \begin{itemize}
+  \item another everyday example:
+  \end{itemize}
+  \begin{center}
+\begin{minted}{scala}
+> List(1, 2, 3).take(-42)
+\end{minted}
+  \end{center}
+  \begin{itemize}
+  \item Quiz: what happens?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,fragile,fragile]
+  \frametitle{Don't accept garbage input}
+  \begin{itemize}
+  \item another everyday example:
+  \end{itemize}
+  \begin{center}
+\begin{minted}{scala}
+> List(1, 2, 3).take(-42)
+\end{minted}
+  \end{center}
+  \begin{itemize}
+  \item Quiz: what happens?
+  \end{itemize}
+\begin{minted}{scala}
+res1: List[Int] = List()
+\end{minted}
+\end{frame}
+
 \begin{frame}
-  \frametitle{Don't accept garbage as your input}
+  \frametitle{Don't accept garbage input}
   \begin{itemize}
     
-  \item our constructor and methods are quite nice with us
+  \item our constructor and methods are quite liberal
   \item they take almost everything!
   \item does the validation really belong in our vending machine?
   \item actually it is the \textbf{caller}'s fault!
@@ -443,9 +484,13 @@ sealed abstract class List[+A] {
 \begin{frame}
   \frametitle{How To Validate}
   \begin{itemize}
-  \item we have two choices
-  \item use a new class with smart constructors
-  \item use a \texttt{Tagged} and phantom types
+  \item okay seems like it makes sense to do this
+  \item goal: make core logic more focused, factor out error handling
+  \item how?
+    \begin{itemize}
+    \item use a wrapper with smart constructors
+    \item use phantom types as ``tags''
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -469,129 +514,192 @@ object Email {
 \end{frame}
 
 \begin{frame}
+  \frametitle{Phantom Types}
+  \begin{itemize}
+  \item phantom type: not associated to any value
+  \item only exists at compile time
+  \item we can use them to add some information to values 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Phantom Types: The Idea}
+  \inputminted[firstline=3]{scala}{../src/main/scala/de/codecentric/UserInput.scala}
+\end{frame}
+
+\begin{frame}
   \frametitle{Phantom Types for Tags}
   \begin{itemize}
   \item Creating new classes for invariants works, but very cumbersome
   \item But: Whenever input enters your system: require validation
   \item Avoid validation again and again because of different flows
     through system and refactorings (context-free!)
+  \item annoying: static input requires validation
+  \item \textit{skipping}: \texttt{Tagged} to avoid wrappers
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{Refined}
   \begin{itemize}
-  \item Indexing into collections
-  \item Creating e.g. Versions from Strings
-  \item Calculate average on empty list?
-  \item Validation should happen \textbf{at the boundaries} (once and
-    for all)
+  \item the refined library to the rescue
+  \item in essence: a \textbf{Refined[T, P]}
+  \item actual value \texttt{T} + phantom type for predicate \texttt{P}
+  \item no wrapper, no custom phantom type (ADT)
+  \item only define your predicate or use the builtin ones
+  \item killer feature: perform validation for literals as input at compile time
   \end{itemize}
 \end{frame}
 
-\section{No Inconsistent States}
-
-\begin{frame}
-  \frametitle{Types As Documentation}
-  \begin{itemize}
-  \item common pattern: builders and state machines
-  \item problem: invariants / minimal set of attributes / conflicting
-    methods
-  \item goal: only allow correct usage
-  \item (without using inheritance)
-  \end{itemize}
+\begin{frame}[fragile,fragile]
+  \frametitle{Using Refined}
+  \inputminted[firstline=8,
+  fontsize=\small]{scala}{../src/main/scala/de/codecentric/refined/UserInput.scala}
+\begin{minted}[fontsize=\small]{text}
+[error] UserInput.scala:15: Predicate failed: (-1 > 0).
+[error]   index(List(1, 2, 3))(-1) // compile error
+[error]                        ^
+[error] one error found
+\end{minted}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Types As Documentation}
-  \begin{itemize}
-  \item phantom types + subtyping
-  \item model the ``states'' as a type, use bounds to constrict
-  \end{itemize}
+  \frametitle{Case Study}
+  \inputminted[fontsize=\small,firstline=9, lastline=23]{scala}{../src/main/scala/de/codecentric/three/VendingMachine.scala}
+\end{frame}
+
+\section{Restrict Valid Operations}
+
+\begin{frame}
+  \frametitle{Restrict Valid Operations}
+  \begin{center}
+    \includegraphics[width=.8\textwidth]{../pics/control-panel.jpg}
+  \end{center}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Phantom Types for State Machines}
-  \begin{itemize}
-  \item Given a state machine type of flow, we can represent that with
-    types!
-  \item Use subtyping to model your graph
-  \item typical example: the builder
-  \end{itemize}
+  \frametitle{Vending State Machine}
+  \begin{center}
+    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+      distance=5cm, semithick]
+      \tikzstyle{every
+        state}=[fill=beamer@ccblue,draw=none,text=white]
+
+      \node[initial,state] (A) {Idle};
+      \node[state] (B) [above right of=A] {Half};
+      \node[state] (C) [below right of=B] {Ready};
+
+      \path (A) edge [bend left] node {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (B) edge node {\textcolor{beamer@ccgreen!130}{1}$\Vert$-} (C) (B)
+      edge node {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (C) edge [bend left, swap] node {\textcolor{beamer@ccgreen!130}{abort}$\Vert$50} (A) (C)
+      edge [swap, bend left] node {\textcolor{beamer@ccgreen!130}{abort}$\Vert$1} (A) edge [bend left=50] node
+      {\textcolor{beamer@ccgreen!130}{pushButton}$\Vert$drink} (A);
+    \end{tikzpicture}
+  \end{center}
 \end{frame}
 
 \begin{frame}
-  \frametitle{State Machine}
-  \begin{itemize}
-  \item example: vending machine
-    % TODO: insert graphical image here
-  \item actions:
-    \begin{itemize}
-    \item insert 50 cents
-    \item abort and return change
-    \item extract item
-    \end{itemize}
-  \item constraints:
-    \begin{itemize}
-    \item you can only insert 50 cents twice
-    \item extraction is not possible until paid
-    \item abort can only be used before confirm
-    \end{itemize}
-  \end{itemize}
+  \frametitle{Vending State Machine}
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \resizebox{1.2\textwidth}{!}{
+        \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+          distance=3cm, semithick]
+          \tikzstyle{every
+            state}=[fill=beamer@ccblue,draw=none,text=white]
+
+          \node[initial,state] (A) {Idle};
+          \node[state] (B) [above right of=A] {Half};
+          \node[state] (C) [below right of=B] {Ready};
+
+          \path (A) edge [bend left] node {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (B) edge node {\textcolor{beamer@ccgreen!130}{1}$\Vert$-} (C) (B)
+          edge node {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (C) edge [bend left, swap] node {\textcolor{beamer@ccgreen!130}{abort}$\Vert$50} (A) (C)
+          edge [swap, bend left] node {\textcolor{beamer@ccgreen!130}{abort}$\Vert$1} (A) edge [bend left=50] node
+          {\textcolor{beamer@ccgreen!130}{pushButton}$\Vert$drink} (A);
+        \end{tikzpicture}
+      }
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+      \item possible:
+        \begin{itemize}
+        \item 50 $\rightarrow$ 50 $\rightarrow$ pushbutton
+        \item 50 $\rightarrow$ abort
+        \item 1 $\rightarrow$ pushbutton
+        \item 1 $\rightarrow$ abort
+        \end{itemize}
+      \item available actions depend on the \textbf{implicit state}
+      \item methods can return \textbf{different types} depending on the
+        state, e.g., abort
+      \item so we need to check those two invariants (via types)!
+      \end{itemize}
+    \end{column}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{State Machine}
-  \begin{itemize}
-  \item let's express that in code:
-  \end{itemize}
+  \frametitle{State Machine: States}
+  \begin{center}
+    \inputminted[fontsize=\small, firstline=11,
+    lastline=14]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+  \end{center}
+  \begin{center}
+    \resizebox{0.5\textwidth}{!}{
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+        distance=4cm, semithick]
+        \tikzstyle{every
+          state}=[fill=beamer@ccblue,draw=none,text=white]
 
-\begin{minted}{scala}
+        \node[initial,state] (A) {Idle}; \node[state] (B) [above right
+        of=A] {Half}; \node[state] (C) [below right of=B] {Ready};
 
-\end{minted}
+        \path (A) edge [bend left] node
+        {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (B) edge node
+        {\textcolor{beamer@ccgreen!130}{1}$\Vert$-} (C) (B) edge node
+        {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (C) edge [bend
+        left, swap] node
+        {\textcolor{beamer@ccgreen!130}{abort}$\Vert$50} (A) (C) edge
+        [swap, bend left] node
+        {\textcolor{beamer@ccgreen!130}{abort}$\Vert$1} (A) edge [bend
+        left=50] node
+        {\textcolor{beamer@ccgreen!130}{pushButton}$\Vert$drink} (A);
+      \end{tikzpicture}
+    }
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{State Machine: Vending Machine}
+  \inputminted[firstline=16, lastline=34, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{State Machine: Typeclass}
+  \inputminted[firstline=39, lastline=49, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{State Machine: Implicit Evidence}
+  \inputminted[firstline=51, lastline=62, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
 \end{frame}
 
 \begin{frame}
   \frametitle{State Machines: Summary}
   \begin{itemize}
-  \item alternative to inheritance, but more ligthweight (instead of
-    creating classes for all states)
-  \item does not allow invalid state
-  \end{itemize}
-\end{frame}
-
-\section{Calculate Types}
-
-\begin{frame}
-  \frametitle{Returning Goods}
-  \begin{itemize}
-  \item our vending machine only produced one type of good
-  \item let's extend the machine:
-    \begin{itemize}
-    \item after inserting fifty cents, calling extract dispenses XXX
-    \item after inserting one euro, calling extract dispenses YYY
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Returning Goods}
-  \begin{itemize}
-  \item if we look at our extraction method:
-  \end{itemize}
-
-\begin{minted}{scala}
-def extract : ??? // outcome depends on the state!
-\end{minted}
-
-  \begin{itemize}
-  \item out \texttt{return type} depends on the current state!
-  \item solution: calculate return type from our state.  How?
+  \item calling methods only compiles when it makes sense
+  \item eliminates our \textbf{Either} return types
+  \item but: restricted to immutability (change type parameters)
+  \item potentially less code than inheritance (and less weird)
   \end{itemize}
 \end{frame}
 
 \begin{frame}
   \frametitle{The Compiler Is There To Help!}
+  \begin{center}
+    \includegraphics[width=0.75\textwidth]{../pics/robot.jpg}
+  \end{center}
+
   \vfill
   \begin{center}
     {\Huge THANKS!}

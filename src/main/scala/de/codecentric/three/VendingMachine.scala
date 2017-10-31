@@ -1,21 +1,21 @@
 package de.codecentric.three
 
+import eu.timepit.refined._
+import eu.timepit.refined.api._
+import eu.timepit.refined.numeric._
+import VendingMachine._
+
 final class VendingMachine(id: Identifier) {
   private[this] var amount: Int = 0
-
-  def insertMoney(coin: Coin): Unit = coin match {
-    case FiftyCents => amount += 50
-    case OneEuro => amount += 100
-  }
-
-  def pushButton(): Either[InsufficientFunds, Unit] = if (amount == 100) {
-    Right(())
-  } else {
-    Left(InsufficientFunds)
-  }
+  def insertMoney(cents: Coin): Either[InvalidCoin, Unit] = ???
+  def pushButton(): Either[InsufficientFunds, Unit] = ???
+  def abort(): Either[NoChange, Int] = ???
 }
 
-case class Identifier(value: Int)
+object VendingMachine {
+  type Identifier = String Refined
+    Interval.Closed[W.`1`.T, W.`100`.T]
+}
 
 sealed trait Coin
 case object FiftyCents extends Coin

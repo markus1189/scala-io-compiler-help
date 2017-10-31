@@ -30,7 +30,12 @@ object VendingMachine {
     }
 }
 
-trait InvalidCoin; object InvalidCoin extends InvalidCoin
-trait InsufficientFunds; object InsufficientFunds extends InsufficientFunds
-trait InvalidId; object InvalidId extends InvalidId
-trait NoChange; object NoChange extends NoChange
+// define left sides of eithers
+trait InvalidCoin
+object InvalidCoin extends InvalidCoin
+trait InsufficientFunds
+object InsufficientFunds extends InsufficientFunds
+trait InvalidId
+object InvalidId extends InvalidId
+trait NoChange
+object NoChange extends NoChange
