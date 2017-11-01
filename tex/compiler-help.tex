@@ -487,7 +487,9 @@ object Email {
   \begin{itemize}
   \item phantom type: not associated to any value
   \item only exists at compile time
-  \item we can use them to add some information to values 
+  \item attach information to values
+  \item example: validation of user input
+  \item instead of repeated validation ``to be sure'', enforce with types
   \end{itemize}
 \end{frame}
 
@@ -600,7 +602,7 @@ res2: Either[String, Int Refined Positive] =
 \begin{frame}
   \frametitle{Vending State Machine}
   \begin{center}
-    \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+    \begin{tikzpicture}[->,>=stealth'',shorten >=1pt,auto,node
       distance=5cm, semithick]
       \tikzstyle{every
         state}=[fill=beamer@ccblue,draw=none,text=white]
