@@ -7,13 +7,13 @@ import VendingMachine._
 
 final class VendingMachine(id: Identifier) {
   private[this] var amount: Int = 0
-  def insertMoney(cents: Coin): Either[InvalidCoin, Unit] = ???
+  def insertMoney(cents: Coin): Unit = ???
   def pushButton(): Either[InsufficientFunds, Unit] = ???
   def abort(): Either[NoChange, Int] = ???
 }
 
 object VendingMachine {
-  type Identifier = String Refined
+  type Identifier = Int Refined
     Interval.Closed[W.`1`.T, W.`100`.T]
 }
 

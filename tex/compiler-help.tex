@@ -516,8 +516,32 @@ object Email {
   \item actual value \texttt{T} + phantom type for predicate \texttt{P}
   \item no wrapper, no custom phantom type (ADT)
   \item only define your predicate or use the builtin ones
-  \item killer feature: perform validation for literals as input at compile time
+  \item killer feature: perform validation for literals as input at
+    compile time
   \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Refined: Predicates}
+  \begin{itemize}
+  \item DSL to define predicates
+  \item many builtins:
+    \textcolor{beamer@ccblue}{\href{https://github.com/fthomas/refined\#provided-predicates}{link}}
+  \item useful as documentation as well
+  \end{itemize}
+
+\begin{minted}{scala}
+String Refined Uri
+String Refined Uuid
+String Refined MatchesRegex[W.`"[0-9]+"`.T]
+
+type ZeroToOne = Not[Less[W.`0.0`.T]] 
+  And Not[Greater[W.`1.0`.T]]
+
+type ValidChar = 
+  AnyOf[Digit :: Letter :: Whitespace :: HNil]
+\end{minted}
+  
 \end{frame}
 
 \begin{frame}[fragile,fragile]
@@ -532,9 +556,36 @@ object Email {
 \end{minted}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Refined: Dynamic Input}
+  \begin{itemize}
+  \item but the macro works only for literal input
+  \item dynamic values: you still have to take care
+  \end{itemize}
+  
+\begin{minted}{scala}
+> refineV[Positive](fortyTwo)
+res1: Either[String, Int Refined Positive] = 
+  Right(...)
+> refineV[Positive](negativeInt)
+res2: Either[String, Int Refined Positive] = 
+  Left(...)
+\end{minted}
+\end{frame}
+
 \begin{frame}
   \frametitle{Case Study}
-  \inputminted[fontsize=\small,firstline=9, lastline=23]{scala}{../src/main/scala/de/codecentric/three/VendingMachine.scala}
+  \inputminted[fontsize=\small,firstline=8, lastline=22]{scala}{../src/main/scala/de/codecentric/three/VendingMachine.scala}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Case Study}
+  \begin{itemize}
+  \item the \texttt{Identifier} is checked by \texttt{refined}
+  \item \texttt{insertMoney} only allows valid coins by design
+  \item we can get rid of the \texttt{Either} in \texttt{insertMoney}
+  \item what else?
+  \end{itemize}
 \end{frame}
 
 \section{Only Valid Ops}
@@ -609,8 +660,8 @@ object Email {
 \begin{frame}[fragile]
   \frametitle{State Machine: States}
   \begin{center}
-    \inputminted[fontsize=\small, firstline=11,
-    lastline=14]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+    \inputminted[fontsize=\small, firstline=3,
+    lastline=6]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
   \end{center}
   \begin{center}
     \resizebox{0.5\textwidth}{!}{
@@ -640,17 +691,73 @@ object Email {
 
 \begin{frame}[fragile]
   \frametitle{State Machine: Vending Machine}
-  \inputminted[firstline=16, lastline=34, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+  \inputminted[firstline=8, lastline=25, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{State Machine: Typeclass}
-  \inputminted[firstline=39, lastline=49, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+  \inputminted[firstline=31, lastline=42, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{State Machine: Implicit Evidence}
-  \inputminted[firstline=51, lastline=62, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+  \inputminted[firstline=44, lastline=48, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+\begin{center}
+    \resizebox{0.5\textwidth}{!}{
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+        distance=4cm, semithick]
+        \tikzstyle{every
+          state}=[fill=beamer@ccblue,draw=none,text=white]
+
+        \node[initial,state] (A) {Idle}; \node[state] (B) [above right
+        of=A] {Half}; \node[state] (C) [below right of=B] {Ready};
+
+        \path (A) edge [bend left] node
+        {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (B) edge node
+        {\textcolor{beamer@ccgreen!130}{1}$\Vert$-} (C) (B) edge node
+        {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (C) edge [bend
+        left, swap] node
+        {\textcolor{beamer@ccgreen!130}{abort}$\Vert$50} (A) (C) edge
+        [swap, bend left] node
+        {\textcolor{beamer@ccgreen!130}{abort}$\Vert$1} (A) edge [bend
+        left=50] node
+        {\textcolor{beamer@ccgreen!130}{pushButton}$\Vert$drink} (A);
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{State Machine: Implicit Evidence}
+  \inputminted[firstline=50, lastline=54, fontsize=\small]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
+\begin{center}
+    \resizebox{0.5\textwidth}{!}{
+      \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node
+        distance=4cm, semithick]
+        \tikzstyle{every
+          state}=[fill=beamer@ccblue,draw=none,text=white]
+
+        \node[initial,state] (A) {Idle}; \node[state] (B) [above right
+        of=A] {Half}; \node[state] (C) [below right of=B] {Ready};
+
+        \path (A) edge [bend left] node
+        {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (B) edge node
+        {\textcolor{beamer@ccgreen!130}{1}$\Vert$-} (C) (B) edge node
+        {\textcolor{beamer@ccgreen!130}{50}$\Vert$-} (C) edge [bend
+        left, swap] node
+        {\textcolor{beamer@ccgreen!130}{abort}$\Vert$50} (A) (C) edge
+        [swap, bend left] node
+        {\textcolor{beamer@ccgreen!130}{abort}$\Vert$1} (A) edge [bend
+        left=50] node
+        {\textcolor{beamer@ccgreen!130}{pushButton}$\Vert$drink} (A);
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{State Machines: Usage}
+  \inputminted[firstline=63]{scala}{../src/main/scala/de/codecentric/four/VendingMachine.scala}
 \end{frame}
 
 \begin{frame}

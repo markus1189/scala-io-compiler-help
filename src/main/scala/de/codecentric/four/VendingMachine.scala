@@ -35,10 +35,11 @@ sealed abstract class Next[S <: VState] {
 }
 
 final object Next {
-  type Aux[S0 <: VState, N0 <: VState, O0 <: Coin] = Next[S0] {
-    type Next = N0
-    type Out = O0
-  }
+  type Aux[S0 <: VState, N0 <: VState, O0 <: Coin] =
+    Next[S0] {
+      type Next = N0
+      type Out = O0
+    }
 
   implicit val halfAbort:
       Next.Aux[Half, Idle, FiftyCents.type] = new Next[Half] {
@@ -59,14 +60,15 @@ sealed trait Coin
 case object FiftyCents extends Coin
 case object OneEuro extends Coin
 
-object Example {
+object VendingMachineExamples {
   val machine = VendingMachine.initial
 
   // machine.insertSecond50()
-  // Cannot prove that de.codecentric.Idle =:= de.codecentric.Half.
+  // Cannot prove that
+  //   de.codecentric.Idle =:= de.codecentric.Half.
 
   // machine.abort()
-  // no implicit found
+  // no implicit found for Next[Idle, ???, ???]
 
   machine.insertFirst50().insertSecond50().pushButton()
   machine.insertEuro().pushButton()

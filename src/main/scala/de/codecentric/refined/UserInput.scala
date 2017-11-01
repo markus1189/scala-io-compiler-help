@@ -12,7 +12,4 @@ object Refined {
   index(List(1, 2, 3))(2)
 
   index(List(1, 2, 3))(-1)
-
-  refineV[Positive](42):
-    Either[String, Int Refined Positive]
 }
